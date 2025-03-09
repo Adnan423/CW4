@@ -97,3 +97,75 @@ class _PlanManagerScreenState extends State<PlanManagerScreen> {
       },
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Plan Manager')),
+      body: Column(
+        children: [
+          TableCalendar(
+            firstDay: DateTime(2000),
+            lastDay: DateTime(2100),
+            focusedDay: _selectedDate,
+            calendarFormat: _calendarFormat,
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDate = selectedDay;
+              });
+            },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: plans.length,
+              itemBuilder: (context, index) {
+                final plan = plans[index];
+                return Slidable(
+                  key: Key(plan.name),
+                  startActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (_) => _markCompleted(plan),
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        icon: Icons.check,
+                        label: 'Complete',
+                      ),
+                    ],
+                  ),
+                  endActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (_) => _deletePlan(plan),
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                        label: 'Delete',
+                      ),
+                    ],
+                  ),
+                  child: GestureDetector(
+                    onLongPress: () => _showPlanDialog(plan: plan),
+                    child: Card(
+                      color: plan.isCompleted ? Colors.green[200] : Colors.white,
+                      child: ListTile(
+                        title: Text(plan.name, style: TextStyle(decoration: plan.isCompleted ? TextDecoration.lineThrough : null)),
+                        subtitle: Text(plan.description),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showPlanDialog(),
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
