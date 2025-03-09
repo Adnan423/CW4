@@ -60,3 +60,40 @@ class _PlanManagerScreenState extends State<PlanManagerScreen> {
       plans.remove(plan);
     });
   }
+
+  void _showPlanDialog({Plan? plan}) {
+    final TextEditingController nameController = TextEditingController(text: plan?.name ?? "");
+    final TextEditingController descController = TextEditingController(text: plan?.description ?? "");
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(plan == null ? "Create Plan" : "Edit Plan"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(controller: nameController, decoration: InputDecoration(labelText: "Plan Name")),
+              TextField(controller: descController, decoration: InputDecoration(labelText: "Description")),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (plan == null) {
+                  _addPlan(nameController.text, descController.text, _selectedDate);
+                } else {
+                  _updatePlan(plan, nameController.text, descController.text);
+                }
+                Navigator.pop(context);
+              },
+              child: Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
