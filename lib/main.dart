@@ -35,6 +35,7 @@ class _PlanManagerScreenState extends State<PlanManagerScreen> {
   List<Plan> plans = [];
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDate = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
 
   void _addPlan(String name, String description, DateTime date) {
     setState(() {
@@ -107,11 +108,20 @@ class _PlanManagerScreenState extends State<PlanManagerScreen> {
           TableCalendar(
             firstDay: DateTime(2000),
             lastDay: DateTime(2100),
-            focusedDay: _selectedDate,
+            focusedDay: _focusedDay,
+            selectedDayPredicate: (day) {
+              return isSameDay(_selectedDate, day);
+            },
             calendarFormat: _calendarFormat,
+            onFormatChanged: (format) {
+              setState(() {
+                _calendarFormat = format;
+              });
+            },
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
                 _selectedDate = selectedDay;
+                _focusedDay = focusedDay;
               });
             },
           ),
